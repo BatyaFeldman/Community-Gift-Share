@@ -1,0 +1,65 @@
+﻿@using SimchaFund.Data
+@using SimchaFund.Models
+@model ContributionsPageViewModel
+
+<h2>Contributors for @Model.Simcha.Name Simcha</h2>
+
+<form method="post" action="/Home/UpdateContributions">
+    <input type="hidden" name="simchaId" value="@Model.Simcha.Id" />
+
+    <table class="table table-striped">
+        <tr>
+            <th>Contribute</th>
+            <th>Name</th>
+            <th>Balance</th>
+            <th>Always Include</th>
+            <th>Amount</th>
+        </tr>
+        @{ int i = 0;}
+        @foreach (SimchaContributor c in Model.ContributorsForSimcha)
+        {
+
+        <tr>
+            <input type="hidden" name="includedContributions[@i].ContributorId" value="@c.ContributorId" />
+
+            <td>
+                @if (c.Amount != null)
+                {
+                    <input type="checkbox" name="includedContributions[@i].Include" checked value="true" />
+                    <input type="hidden" name="includedContributions[@i].Include" value="false" />
+                }
+                else
+                {
+                    <input type="checkbox" name="includedContributions[@i].Include" value="true" />
+                    <input type="hidden" name="includedContributions[@i].Include" value="false" />
+                }
+
+
+            </td>
+
+            <td>@c.Name</td>
+            <td>@c.Balance.ToString("C")</td>
+            <td>
+                @if (c.AlwaysInclude == true)
+                {
+                    <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+
+                }
+                else
+                {
+                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+
+                }
+            </td>
+            <td><input type="text" placeholder="amount" value="@(c.Amount ?? 5)" class="form-control" name="includedContributions[@i].Amount" /> </td>
+
+            @{ i++;}
+        </tr>
+        }
+    </table>
+
+    <button class="btn btn-success" name="UpdateContributions">Update</button>
+</form>
+
+
+

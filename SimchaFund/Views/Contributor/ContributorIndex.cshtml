@@ -1,0 +1,144 @@
+﻿@using SimchaFund.Data;
+@using SimchaFund.Models
+@model ContributorViewModel
+
+<h2 style="text-align:center">Contributors</h2>
+
+<div class="row header">
+    <div class="col-md-4">
+        <button class="btn btn-info newContributor" id="newContributor">New Contributor</button>
+    </div>
+
+    <div class="col-md-4">
+        <input type="text" placeholder="Search" name="searchText" class="form-control input-sm" id="searchBar" />
+
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-danger" id="clear">Clear</button>
+    </div>
+
+</div>
+<br />
+<br />
+
+
+<div class="container">
+    <table class="table table-responsive" id="contribTable">
+        <tr>
+            <th style="text-align:center; vertical-align: middle">Deposit</th>
+            <th style="text-align:center; vertical-align: middle">Name</th>
+            <th style="text-align:center; vertical-align: middle">Cell</th>
+            <th style="text-align:center; vertical-align: middle">Balance</th>
+            <th style="text-align:center; vertical-align: middle">Always Include</th>
+            <th style="text-align:center; vertical-align: middle">Action</th>
+        </tr>
+
+        @foreach (Contributor c in Model.Contributors)
+        {
+            <tr>
+
+                <td>
+                    <a href="#" class="btn btn-success deposit" data-contribid="@c.Id" data-contribname="@c.Name">Deposit</a>
+                </td>
+
+                <td>@c.Name</td>
+                <td>@c.PhoneNumber</td>
+                <td>@c.Balance.ToString("C")</td>
+                <td>
+                    @if (c.AlwaysInclude == true)
+                    {
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+
+                    }
+                    else
+                    {
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    }
+                </td>
+                <td>
+                    <a href="/Contributor/History?contributorId=@c.Id" class="btn btn-primary">View History</a>
+                    <a href="#" class="btn btn-primary edit-contrib" data-id="@c.Id" data-name="@c.Name" data-number="@c.PhoneNumber" data-date="@c.Date.ToString("yyyy-MM-dd")"
+                       data-alwaysinclude="@c.AlwaysInclude">Edit</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+@*addContributor modal*@
+<div class="modal" id="contributorModal" tabindex="-1" role="dialog">
+    <form id="contribForm" method="post" action="/Contributor/AddContributor">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="titleText" style="font-size:32px">Contributor</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" placeholder="Name" name="Name" class="form-control" id="name" />
+                    <br />
+                    <input type="text" placeholder="Cell" name="PhoneNumber" class="form-control" id="number" />
+                    <br />
+                    <input type="text" placeholder="Initial Deposit" name="Balance" class="form-control" id="initial-deposit" />
+                    <br />
+                    <input type="date" placeholder="Date" name="Date" class="form-control" id="date" />
+                    <br />
+
+                    <div class="checkbox">
+                        <div class="col-md-6">
+                            <label for="alwaysInclude">
+                                <input id="alwaysInclude" name="AlwaysInclude" type="checkbox" value="true">
+                                Always Include
+                                <input name="AlwaysInclude" type="hidden" value="false">
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Contributor</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal" id="depositModal" tabindex="-1" role="dialog">
+    <form method="post" action="/Contributor/AddDeposit">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:32px">Add Deposit for <span id="depositName"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" />
+                    <input type="hidden" name="ContributorId" id="contributorId" />
+                    <input type="text" placeholder="Amount" name="Amount" class="form-control" />
+                    <br />
+                    <input type="date" placeholder="Date" name="Date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Deposit</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+@section scripts
+    {
+    <script src="~/Scripts/AddContributor.js"></script>
+    <script src="~/Scripts/Search.js"></script>
+}
+
